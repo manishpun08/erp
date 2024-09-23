@@ -1,0 +1,380 @@
+@extends('layouts.pedal1')
+
+@section('page-title')
+{{__('Employee')}}
+@endsection
+@section('breadcrumb')
+<li class="breadcrumb-item"><a href="{{route('dashboard')}}">{{__('Dashboard')}}</a></li>
+<li class="breadcrumb-item"><a href="{{route('employee.index')}}">{{__('Employee')}}</a></li>
+<li class="breadcrumb-item">{{$employeesId}}</li>
+@endsection
+
+@section('action-btn')
+<div class="float-end">
+    @can('edit employee')
+    <a href="{{route('employee.edit',\Illuminate\Support\Facades\Crypt::encrypt($employee->id))}}"
+        data-bs-toggle="tooltip" title="{{__('Edit')}}" class="btn btn-sm btn-primary">
+        <i class="ti ti-pencil"></i>
+    </a>
+    @endcan
+</div>
+@endsection
+
+@section('content')
+<div class="profile-body">
+
+    <div class="row">
+        <div class="col-lg-3 profile-left text-light">
+            <div class="container">
+                <div class="profile-top text-center">
+                    <img src="https://erp.cdn.pedal1.com/storage/31a542c1-7bf9-4dee-bfad-66183f7d0f72/uploads/avatar/avatar.png"
+                        alt="">
+                    <h4 class="mb-0">{{!empty($employee)?$employee->name:''}}</h4>
+                    <span>{{!empty($employee->designation)?$employee->designation->name:''}}</span>
+                </div>
+                <hr class="mb-0">
+                <div class="profile-bottom">
+
+                    <h6 class="mb-0">{{__('Branch')}}:</h6>
+                    <span class="mb-0">{{!empty($employee->branch)?$employee->branch->name:''}}</span>
+                    <h6 class="mb-0">Status</h6>
+                    <span class="d-flex">Active
+                        <div class="status "></div>
+                        <button>Send Message</button>
+                    </span>
+                    <h6 class="mb-0">{{__('Email')}}:</h6>
+                    <a href="#" class="conc">{{!empty($employee)?$employee->email:''}}</a>
+                    <h6 class="mb-0">{{__('Office Number')}}:</h6>
+                    <a href="# " class="conc">{{!empty($employee)?$employee->phone:''}}</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9  profile-right ">
+            <div class="head-info">
+                <h2 class="mb-0 ">General Details</h2>
+                <div class="row ">
+                    <div class="col-lg-3  info-left">
+                        <p class="mb-0 pb-0">{{__('Date of Birth')}}:</p>
+                    </div>
+
+                    <div class="col-lg-9 info-right">
+                        <p class="mb-0 pb-0">{{\Auth::user()->dateFormat(!empty($employee)?$employee->dob:'')}}</p>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-3  info-left">
+                        <p class="mb-0 pb-0">{{__('Department')}}:</p>
+
+                    </div>
+
+                    <div class="col-lg-9 info-right">
+                        <p class="mb-0 pb-0">{{!empty($employee->department)?$employee->department->name:''}}</p>
+
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-3  info-left">
+                        <p class="mb-0 pb-0">{{__('Date Of Joining')}}:</p>
+
+                    </div>
+
+                    <div class="col-lg-9 info-right">
+                        <p class="mb-0 pb-0">{{\Auth::user()->dateFormat(!empty($employee)?$employee->company_doj:'')}}
+                        </p>
+
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-3  info-left">
+                        <p class="mb-0 pb-0">{{__('Basic Salary')}}:</p>
+
+                    </div>
+
+                    <div class="col-lg-9 info-right">
+                        <p class="mb-0 pb-0">{{!empty($employee)?$employee->salary:''}}</p>
+
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-3  info-left">
+                        <p class="mb-0 pb-0">{{__('Salary Type')}}:</p>
+
+                    </div>
+
+                    <div class="col-lg-9 info-right">
+                        <p class="mb-0 pb-0">{{!empty($employee->salaryType)?$employee->salaryType->name:''}}</p>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-3  info-left">
+                        <p class="mb-0 pb-0">{{__('Address')}}:</p>
+
+                    </div>
+
+                    <div class="col-lg-9 info-right">
+                        <p class="mb-0 pb-0">{{!empty($employee)?$employee->address:''}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="head-info">
+                <h2 class="mb-0 ">Additional Details</h2>
+                <div class="row ">
+                    <div class="col-lg-3  info-left">
+                        <p class="mb-0 pb-0">Citizenship:</p>
+                    </div>
+        
+                    <div class="col-lg-9 info-right">
+                        <p class="mb-0 pb-0"> Nepal ko citizen</p>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-3  info-left">
+                        <p class="mb-0 pb-0">{{__('Bank Name')}}:</p>
+        
+                    </div>
+        
+                    <div class="col-lg-9 info-right">
+                        <p class="mb-0 pb-0"> {{!empty($employee)?$employee->bank_name:''}}</p>
+        
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-3  info-left">
+                        <p class="mb-0 pb-0">{{__('Account Number')}}:</p>
+        
+                    </div>
+        
+                    <div class="col-lg-9 info-right">
+                        <p class="mb-0 pb-0"> {{!empty($employee)?$employee->account_number:''}}</p>
+        
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-3  info-left">
+                        <p class="mb-0 pb-0"> {{__('Branch Location')}} </p>
+        
+                    </div>
+        
+                    <div class="col-lg-9 info-right">
+                        <p class="mb-0 pb-0"> {{!empty($employee)?$employee->branch_location:''}} </p>
+        
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-3  info-left">
+                        <p class="mb-0 pb-0">{{__('Bank Identifier Code')}}:</p>
+        
+                    </div>
+        
+                    <div class="col-lg-9 info-right">
+                        <p class="mb-0 pb-0">{{!empty($employee)?$employee->bank_identifier_code:''}}</p>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-lg-3  info-left">
+                        <p class="mb-0 pb-0">{{__('Tax Payer Id')}}:</p>
+        
+                    </div>
+        
+                    <div class="col-lg-9 info-right">
+                        <p class="mb-0 pb-0">{{!empty($employee)?$employee->tax_payer_id:''}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+
+
+ 
+
+</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+@endsection
+
+<style>
+    a {
+        text-decoration: none;
+    }
+
+
+    .profile-body {
+        margin: 20px 0;
+    }
+
+    .profile-right {
+        padding: 40px;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        background: #E7E8E6;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .profile-right h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #4D4D4D;
+        padding-bottom: 5px;
+    }
+
+    .head-info {
+        border-bottom: 3px solid #ddd;
+        padding-left: 30px
+    }
+
+    .info-left p {
+        line-height: 40px;
+        font-weight: 600;
+        font-size: 20px;
+        color: #4D4D4D;
+
+    }
+
+    .info-right p {
+        line-height: 40px;
+        font-weight: 600;
+        font-size: 20px;
+        color: #4D4D4D;
+    }
+
+    .info-right a {
+        line-height: 40px;
+        color: #4D4D4D;
+        font-weight: 600;
+        font-size: 20px;
+    }
+
+    .info-right a:hover {
+        border-bottom: 1px solid #000;
+    }
+
+
+    .profile-left img {
+        width: 100%;
+        border-radius: 50%;
+        border: 15px solid #fff;
+    }
+
+    .profile-left {
+        /* margin-right:20px; */
+        background-image: url(https://pedal1.com/themes/common/images/profile-1.svg);
+        border-radius: 8px;
+        overflow: hidden;
+        background-repeat: no-repeat;
+        background-size: cover;
+        /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
+    }
+
+    .profile-top.text-center {
+        padding-top: 40px;
+    }
+
+    .profile-left h4 {
+        padding-top: 10px;
+        font-weight: 600;
+    }
+
+    .profile-left span {
+        font-size: 16px;
+    }
+
+    .profile-left button {
+        background: linear-gradient(97.53deg, #71B02B 4.9%, #049B98 96.79%);
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+
+    .profile-bottom {
+        padding-left: 10px;
+        padding-bottom: 40px;
+    }
+
+    .profile-bottom h6 {
+        padding-top: 20px;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .profile-bottom span {
+        font-size: 16px;
+
+    }
+
+    .status {
+        width: 10px;
+        height: 10px;
+        background-color: #aae000;
+        border-radius: 50%;
+        position: relative;
+        top: 6px;
+        left: 4px;
+        margin-right: 10px;
+    }
+
+
+    .profile-left .conc {
+        color: #fff;
+        font-size: 16px;
+    }
+
+    .profile-left .conc:hover {
+        border-bottom: 1px solid #fff;
+    }
+
+    @media (max-width:480px) {
+        .profile-body {
+            margin-left: 0;
+        }
+
+
+        .profile-left img {
+            width: 80%;
+            border-radius: 50%;
+            border: 10px solid #fff;
+        }
+
+        .profile-right {
+            padding: 30px;
+        }
+
+        .info {
+            padding: 0;
+        }
+
+        .info-left p {
+            font-size: 14px;
+            line-height: 30px
+        }
+
+        .info-right p {
+            font-size: 14px;
+            line-height: 30px
+        }
+
+        .head-info {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        .profile-right h2 {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .info-right a {
+            font-size: 14px;
+            line-height: 30px
+        }
+
+    }
+</style>

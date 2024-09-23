@@ -1,0 +1,142 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="col-12">
+                <div class="card-body table-border-style">
+                    <div class="table-responsive p-3">
+                        <table class="table @if($tasks->count()>0) datatable @endif">
+                            <thead>
+                            <tr>
+                                <th scope="col">{{__('Name')}}</th>
+								@if(\Auth::user()->type!='client')
+                                <th  class="with-filter" scope="col">{{__('Client Name')}}</th>
+                                <th class="with-filter" class="stage-col" scope="col" width="250">{{__('Stage')}}</th>
+                                <th class="with-filter" scope="col">{{__('Priority')}}</th>
+								@endif
+                                <th scope="col">{{__('End Date')}}
+
+									<span>
+										<!--
+										<a class="dropdown-item dropdown-asc-dsc" href="#" data-val="end_date-desc"
+										data-bs-toggle="collapse" data-target=".dropdown-asc-dsc">
+											<i class="ti ti-sort-amount-down"></i>
+										</a>
+										<a class="dropdown-item dropdown-asc-dsc" href="#" data-val="end_date-asc"
+										data-bs-toggle="collapse" data-target=".dropdown-asc-dsc">
+											<i class="ti ti-sort-amount-up"></i>
+										</a>-->
+
+									</span>
+
+								</th>
+								@if(\Auth::user()->type!='client')
+                                <th scope="col">{{__('Assigned To')}}</th>
+								@endif
+                                <th scope="col">{{__('Completion')}}</th>
+                                <th scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody class="list">
+
+                            @if(count($tasks) > 0)
+								@php($userType=\Auth::user()->type)
+                                @foreach($tasks as $task)
+                                    <tr>
+                                        <td>
+                                            <span class="h6 text-sm font-weight-bold mb-0">
+
+										@if(\Auth::user()->type!=='client')	<a href="{{route('projects.tasks.show',[$task->project->id,$task->id]) }}">{{ $task->name }}</a> @else {{ $task->name }} @endif
+
+                    </span>
+
+
+                                            <span class="d-flex text-sm text-muted justify-content-between">
+                                        <p class="m-0">@if($task->task_type) {{$task->task_type}} - @endif  {{ $task->project->project_name }}</p>
+                                   @if($userType!='client') <span class="me-5 badge p-2 px-3 rounded bg-{{ (\Auth::user()->checkProject($task->project_id) == 'Owner') ? 'success' : 'warning'  }}">
+                                        {{ __(\Auth::user()->checkProject($task->project_id)) }}</span>
+										@endif
+                                </span>
+                                        </td>
+										@if($userType!='client')
+										<td>
+										<span>{{$task->project->client->name}} </span>
+										</td>
+                                        <td data-search="{{$task->stage->name}}" >
+										<select data-search="{{$task->stage->name}}" data-taction="{{route('projects.task.stageChange', $task->id)}}" class="form-select task-stage-change">
+											@php($stagessss=\App\Models\TaskStage::where('created_by', \Auth::user()->creatorId())->orderBy('order', 'asc')->get())
+											@foreach($stagessss as $stagesss)
+											<option @if($task->stage_id==$stagesss->id) selected @endif value="{{$stagesss->id}}">{{$stagesss->name}}</option>
+											@endforeach
+										</select>
+										</td>
+                                        <td>
+                                            <span class="status_badge badge p-2 px-3 rounded bg-{{__(\App\Models\ProjectTask::$priority_color[$task->priority])}}">{{ __(\App\Models\ProjectTask::$priority[$task->priority]) }}</span>
+                                        </td>
+										@endif
+                                        <td class="{{ (strtotime($task->end_date) < time()) ? 'text-danger' : '' }}">{{ \Auth::user()->dateFormat($task->end_date) }}</td>
+
+										@if($userType!='client')
+										<td>
+                                            <button type="button" data-size="lg" data-url="{{route('projects.task.members', [$task->project_id, $task->id])}}" data-ajax-popup="true" data-bs-original-title="Edit &amp;nbsp;ERP Project Updates" class="avatar-group bg-white border-0">
+                                                @if($task->users()->count() > 0)
+                                                    @if($users = $task->users())
+                                                        @foreach($users as $key => $user)
+                                                            @if($key<3)
+                                                                <span class="avatar rounded-circle avatar-sm">
+                                                                    <img data-original-title="{{(!empty($user)?$user->name:'')}}" @if($user->avatar) src="{{Storage::url('uploads/avatar/'.$user->avatar)}}" @else src="{{Storage::url('uploads/avatar/avatar.png')}}" @endif title="{{ $user->name }}" class="hweb">
+                                                                </span>
+                                                            @else
+                                                                @break
+                                                            @endif
+                                                        @endforeach
+                                                    @endif
+                                                    @if(count($users) > 3)
+                                                        <span class="avatar rounded-circle avatar-sm">
+                                                            <img  data-original-title="{{(!empty($user)?$user->name:'')}}" @if($user->avatar) src="{{Storage::url('uploads/avatar/'.$user->avatar)}}" @else src="{{Storage::url('uploads/avatar/avatar.png')}}" @endif class="hweb">
+                                                        </span>
+                                                    @endif
+                                                @else
+                                                    {{ __('-') }}
+                                                @endif
+                                            </button>
+                                        </td>
+										@endif
+                                        <td>
+                                            <div class="d-flex align-items-center">
+
+                                                <span class="completion mr-2">{{ $task->stage->percent }}%<?php /*{{ $task->taskProgress()['percentage'] }}*/ ?></span>
+                                                {{--<div>
+                                                    <div class="progress" style="width: 100px;">
+                                                        <div class="progress-bar bg-{{ $task->taskProgress()['color'] }}" role="progressbar" aria-valuenow="{{ $task->taskProgress()['percentage'] }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $task->taskProgress()['percentage'] }};"></div>
+                                                    </div>
+                                                </div>--}}
+                                            </div>
+                                        </td>
+                                        <td class="text-end w-15">
+                                            <div class="actions">
+                                                <a class="action-item px-1" data-bs-toggle="tooltip" title="{{__('Attachment')}}" data-original-title="{{__('Attachment')}}">
+                                                    <i class="ti ti-paperclip mr-2"></i>{{ count($task->taskFiles) }}
+                                                </a>
+                                                <a class="action-item px-1" data-bs-toggle="tooltip" title="{{__('Comment')}}" data-original-title="{{__('Comment')}}">
+                                                    <i class="ti ti-brand-hipchat mr-2"></i>{{ count($task->comments) }}
+                                                </a>
+                                                <a class="action-item px-1" data-bs-toggle="tooltip" title="{{__('Checklist')}}" data-original-title="{{__('Checklist')}}">
+                                                    <i class="ti ti-list-check mr-2"></i>{{ $task->countTaskChecklist() }}
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <th scope="col" colspan="7"><h6 class="text-center">{{__('No tasks found')}}</h6></th>
+                                </tr>
+                            @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
